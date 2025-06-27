@@ -35,4 +35,11 @@ public class Cliente {
     private LocalDateTime dataCadastro;
 
     private Boolean ativo;
+
+    public void inativar() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'inativar'");
+    }
+
+
 }

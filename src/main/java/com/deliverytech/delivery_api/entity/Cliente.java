@@ -34,12 +34,11 @@ public class Cliente {
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
 
+    @Column(nullable = true)
     private Boolean ativo;
 
     public void inativar() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'inativar'");
+        this.ativo = false;
     }
-
 
 }

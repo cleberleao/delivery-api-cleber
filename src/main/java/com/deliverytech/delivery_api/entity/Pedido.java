@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class Pedido {
     @Column(name = "cliente_id")
     private Long clienteId;
 
+    //@ManyToOne
     @Column(name = "restaurante_id")
     private Long restauranteId;
 }

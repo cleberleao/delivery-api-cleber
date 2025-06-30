@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.deliverytech.delivery_api.entity.Produto;
+import com.deliverytech.delivery_api.entity.Restaurante;
 import com.deliverytech.delivery_api.services.ProdutoService;
 
 
@@ -21,9 +22,9 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Validated @RequestBody Produto produto) {
+    public ResponseEntity<?> cadastrar(@Validated @RequestBody Produto produto, Restaurante restaurante) {
         try {
-            Produto produtoSalvo = produtoService.cadastrar(produto);
+            Produto produtoSalvo = produtoService.cadastrar(produto, restaurante.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());

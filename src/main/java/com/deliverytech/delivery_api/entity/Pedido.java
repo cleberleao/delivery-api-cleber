@@ -3,12 +3,9 @@ package com.deliverytech.delivery_api.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.deliverytech.delivery_api.enums.StatusPedido;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,7 +37,19 @@ public class Pedido {
     @Column(name = "cliente_id")
     private Long clienteId;
 
-    //@ManyToOne
-    @Column(name = "restaurante_id")
-    private Long restauranteId;
+    @ManyToOne
+    @JoinColumn(name = "restaurante_id")
+    private Restaurante restaurante;
+
+    private String itens;
+
+    public void adicionarItem(ItemPedido item) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adicionarItem'");
+    }
+
+    public void confirmar() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'confirmar'");
+    }
 }

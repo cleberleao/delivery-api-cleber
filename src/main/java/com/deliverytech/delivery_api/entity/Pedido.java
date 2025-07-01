@@ -44,12 +44,15 @@ public class Pedido {
     private String itens;
 
     public void adicionarItem(ItemPedido item) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'adicionarItem'");
+       if (this.itens == null || this.itens.isEmpty()) {
+           this.itens = item.toString();
+       } else {
+           this.itens += "," + item.toString();
+       }
     }
 
     public void confirmar() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'confirmar'");
+        this.status = StatusPedido.CONFIRMADO.name();
+        this.dataPedido = LocalDateTime.now();
     }
 }

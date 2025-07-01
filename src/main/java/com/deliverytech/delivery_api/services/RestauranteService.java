@@ -100,5 +100,10 @@ public class RestauranteService {
             throw new IllegalArgumentException("Taxa de entrega não pode ser negativa");
         }
     }
-    
+
+    public void deletar(Long id) {
+        Restaurante restaurante = buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Restaurante não encontrado: " + id));
+                restauranteRepository.delete(restaurante);
+    }
 }

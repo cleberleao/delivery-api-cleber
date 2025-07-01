@@ -13,10 +13,8 @@ import com.deliverytech.delivery_api.entity.Restaurante;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository <Produto, Long> {
-    // Buscar produtos por restaurante
-    List<Produto> findByRestauranteAndDisponivelTrue(Restaurante restaurante);
 
-    // Buscar produtos por restaurante ID
+    // Buscar produtos por restaurante
     List<Produto> findByRestauranteIdAndDisponivelTrue(Long restauranteId);
 
     // Buscar por categoria
@@ -33,6 +31,7 @@ public interface ProdutoRepository extends JpaRepository <Produto, Long> {
 
     // Ordenar por preço
     List<Produto> findByDisponivelTrueOrderByPrecoAsc();
+
     List<Produto> findByDisponivelTrueOrderByPrecoDesc();
 
     // Query customizada - produtos mais vendidos

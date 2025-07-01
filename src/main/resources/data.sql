@@ -31,21 +31,8 @@ INSERT INTO produtos (nome, descricao, preco, categoria, disponivel, restaurante
 ('Temaki Atum', 'Temaki de atum com cream cheese', 15.90, 'Temaki', true, 3);
 
 -- Inserir pedidos de exemplo
-INSERT INTO pedidos (numero_pedido, data_pedido, status, valor_total, observacoes, cliente_id, restaurante_id) VALUES
-('PED1234567890', CURRENT_TIMESTAMP, 'PENDENTE', 54.80, 'Sem cebola na pizza', 1, 1),
-('PED1234567891', CURRENT_TIMESTAMP, 'CONFIRMADO', 41.80, '', 2, 2),
-('PED1234567892', CURRENT_TIMESTAMP, 'ENTREGUE', 78.80, 'Wasabi à parte', 3, 3);
+INSERT INTO pedidos (numero_pedido, data_pedido, status, valor_total, observacoes, cliente_id, restaurante_id, itens) VALUES
+('PED1234567890', CURRENT_TIMESTAMP, 'PENDENTE', 54.80, 'Sem cebola na pizza', 1, 1, 'Pizza Margherita, Pizza Calabresa'),
+('PED1234567891', CURRENT_TIMESTAMP, 'CONFIRMADO', 41.80, '', 2, 2, 'X-Burger, Batata Frita'),
+('PED1234567892', CURRENT_TIMESTAMP, 'ENTREGUE', 78.80, 'Wasabi à parte', 3, 3, 'Combo Sashimi, Hot Roll Salmão, Temaki Atum');
 
--- Inserir itens dos pedidos
-INSERT INTO itens_pedido (quantidade, preco_unitario, subtotal, pedido_id, produto_id) VALUES
--- Pedido 1 (João - Pizzaria Bella)
-(1, 35.90, 35.90, 1, 1), -- Pizza Margherita
-(1, 28.90, 28.90, 1, 3), -- Lasanha
-
--- Pedido 2 (Maria - Burger House)
-(1, 22.90, 22.90, 2, 5), -- X-Bacon
-(1, 18.90, 18.90, 2, 4), -- X-Burger
-
--- Pedido 3 (Pedro - Sushi Master)
-(1, 45.90, 45.90, 3, 7), -- Combo Sashimi
-(1, 32.90, 32.90, 3, 8); -- Hot Roll

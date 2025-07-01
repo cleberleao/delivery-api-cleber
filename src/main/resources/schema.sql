@@ -26,8 +26,7 @@ CREATE TABLE produtos (
     preco DECIMAL(10,2),
     categoria VARCHAR(50),
     disponivel BOOLEAN,
-    restaurante_id INT,
-    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
+    restaurante_id INT
 );
 
 CREATE TABLE pedidos (
@@ -39,17 +38,7 @@ CREATE TABLE pedidos (
     observacoes VARCHAR(200),
     cliente_id INT,
     restaurante_id INT,
+    itens VARCHAR(200),
     FOREIGN KEY (cliente_id) REFERENCES clientes(id),
     FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
-);
-
-CREATE TABLE itens_pedido (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    quantidade INT,
-    preco_unitario DECIMAL(10,2),
-    subtotal DECIMAL(10,2),
-    pedido_id INT,
-    produto_id INT,
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
-    FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );

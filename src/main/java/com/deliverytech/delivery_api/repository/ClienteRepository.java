@@ -24,20 +24,5 @@ public interface ClienteRepository extends JpaRepository <Cliente, Long> {
 
     // Buscar clientes por nome (contendo)
     List<Cliente> findByNomeContainingIgnoreCase(String nome);
-
-    // Buscar clientes por telefone
-    Optional<Cliente> findByTelefone(String telefone);
-
-    // Query customizada - clientes com pedidos
-   // @Query("SELECT DISTINCT c FROM Cliente c JOIN c.pedidos p WHERE c.ativo = true")
-   // List<Cliente> findClientesComPedidos();
-
-    // Query nativa - clientes por cidade
-    @Query(value = "SELECT * FROM clientes WHERE endereco LIKE %:cidade% AND ativo = true", nativeQuery = true)
-    List<Cliente> findByCidade(@Param("cidade") String cidade);
-
-    // Contar clientes ativos
-    @Query("SELECT COUNT(c) FROM Cliente c WHERE c.ativo = true")
-    Long countClientesAtivos();
     
 }

@@ -29,11 +29,6 @@ public class Produto {
 
     private Boolean disponivel;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurante_id")
-    private Restaurante restaurante;
-
-    @OneToMany(mappedBy = "produto")
-    private List<ItemPedido> itensPedido;
+    private Long restauranteId;
 
 }

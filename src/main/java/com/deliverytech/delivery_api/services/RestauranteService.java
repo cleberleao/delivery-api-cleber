@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+
+import com.deliverytech.delivery_api.repository.PedidoRepository;
+import com.deliverytech.delivery_api.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,12 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.deliverytech.delivery_api.entity.Restaurante;
 import com.deliverytech.delivery_api.repository.RestauranteRepository;
 
+import com.deliverytech.delivery_api.entity.RestauranteDTO;
 
 @Service
 public class RestauranteService {
 
- @Autowired
+    @Autowired
     private RestauranteRepository restauranteRepository;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     /**
      * Cadastrar novo restaurante
@@ -41,20 +51,65 @@ public class RestauranteService {
         return restauranteRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<RestauranteDTO> findById(Long id) {
+        Optional<Restaurante> byId = restauranteRepository.findById(id);
+        if (byId.isEmpty()) {
+            return Optional.empty();
+        }
+        return byId.map(restaurante -> new RestauranteDTO(
+                restaurante.getId(),
+                restaurante.getNome(),
+                restaurante.getCategoria(),
+                restaurante.getEndereco(),
+                restaurante.getTelefone(),
+                restaurante.getTaxaEntrega(),
+                restaurante.getAvaliacao(),
+                restaurante.getAtivo()));
+    }
     /**
      * Listar restaurantes ativos
      */
     @Transactional(readOnly = true)
-    public List<Restaurante> listarAtivos() {
-        return restauranteRepository.findByAtivoTrue();
+    public List<RestauranteDTO> listarAtivos() {
+        List<Restaurante> byAtivoTrue = restauranteRepository.findByAtivoTrue();
+        if (byAtivoTrue.isEmpty()) {
+            throw new IllegalArgumentException("Nenhum restaurante ativo encontrado");
+        }
+        return byAtivoTrue.stream()
+            .map(restaurante -> new RestauranteDTO(
+                restaurante.getId(),
+                restaurante.getNome(),
+                restaurante.getCategoria(),
+                restaurante.getEndereco(),
+                restaurante.getTelefone(),
+                restaurante.getTaxaEntrega(),
+                restaurante.getAvaliacao(),
+                restaurante.getAtivo()))
+            .toList();
     }
 
     /**
      * Buscar por categoria
      */
     @Transactional(readOnly = true)
-    public List<Restaurante> buscarPorCategoria(String categoria) {
-        return restauranteRepository.findByCategoriaAndAtivoTrue(categoria);
+    public List<RestauranteDTO> buscarPorCategoria(String categoria) {
+        List<Restaurante> byCategoria = restauranteRepository.findByCategoria(categoria);
+        if (byCategoria.isEmpty()) {
+            throw new IllegalArgumentException("Nenhum restaurante encontrado para a categoria: " + categoria);
+        }
+
+        return byCategoria.stream()
+            .map(restaurante -> new RestauranteDTO(
+                restaurante.getId(),
+                restaurante.getNome(),
+                restaurante.getCategoria(),
+                restaurante.getEndereco(),
+                restaurante.getTelefone(),
+                restaurante.getTaxaEntrega(),
+                restaurante.getAvaliacao(),
+                restaurante.getAtivo()))
+            .toList();
     }
 
     /**
@@ -103,7 +158,7 @@ public class RestauranteService {
 
     public void deletar(Long id) {
         Restaurante restaurante = buscarPorId(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Restaurante não encontrado: " + id));
-                restauranteRepository.delete(restaurante);
+            .orElseThrow(() -> new IllegalArgumentException("Restaurante não encontrado: " + id));
+        restauranteRepository.delete(restaurante);
     }
 }

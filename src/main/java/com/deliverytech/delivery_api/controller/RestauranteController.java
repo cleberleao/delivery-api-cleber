@@ -1,5 +1,6 @@
 package com.deliverytech.delivery_api.controller;
 
+import com.deliverytech.delivery_api.entity.RestauranteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class RestauranteController {
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
-            Optional<Restaurante> restaurante = restauranteService.buscarPorId(id);
+            Optional<RestauranteDTO> restaurante = restauranteService.findById(id);
             if (restaurante != null) {
                 return ResponseEntity.ok(restaurante);
             } else {
@@ -82,6 +83,20 @@ public class RestauranteController {
                 .body("Erro interno do servidor");
         }
     }
+    //desativar restaurante
+        @PutMapping("/{id}/inativar")
+        public ResponseEntity<?> inativar(@PathVariable Long id) {
+            try {
+                restauranteService.inativar(id);
+                return ResponseEntity.ok().body("Restaurante inativado com sucesso");
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro interno do servidor");
+            }
+        }
+        //buscar por categoria
     @GetMapping("/categoria/{categoria}")
         public ResponseEntity<?> buscarPorCategoria(@PathVariable String categoria) {
             try {
@@ -92,16 +107,4 @@ public class RestauranteController {
             }
         }
 
-        @PutMapping("/{id}/inativar")
-        public ResponseEntity<?> inativar(@PathVariable Long id) {
-            try {
-                restauranteService.inativar(id);
-                return ResponseEntity.noContent().build();
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-            }
-        }
 }

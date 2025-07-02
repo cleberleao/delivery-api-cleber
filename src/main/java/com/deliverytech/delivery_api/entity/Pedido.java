@@ -43,16 +43,4 @@ public class Pedido {
 
     private String itens;
 
-    public void adicionarItem(ItemPedido item) {
-       if (this.itens == null || this.itens.isEmpty()) {
-           this.itens = item.toString();
-       } else {
-           this.itens += "," + item.toString();
-       }
-    }
-
-    public void confirmar() {
-        this.status = StatusPedido.CONFIRMADO.name();
-        this.dataPedido = LocalDateTime.now();
-    }
 }

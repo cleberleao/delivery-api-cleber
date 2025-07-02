@@ -1,4 +1,4 @@
-package com.deliverytech.delivery_api.entity;
+package com.deliverytech.delivery_api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

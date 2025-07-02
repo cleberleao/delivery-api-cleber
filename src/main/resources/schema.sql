@@ -4,8 +4,8 @@ CREATE TABLE clientes (
     email VARCHAR(100) NOT NULL,
     telefone VARCHAR(20),
     endereco VARCHAR(200),
-    data_cadastro TIMESTAMP,
-    ativo BOOLEAN
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ativo TINYINT(1)
 );
 
 CREATE TABLE restaurantes (
@@ -16,7 +16,7 @@ CREATE TABLE restaurantes (
     telefone VARCHAR(20),
     taxa_entrega DECIMAL(10,2),
     avaliacao DECIMAL(2,1),
-    ativo BOOLEAN
+    ativo TINYINT(1)
 );
 
 CREATE TABLE produtos (
@@ -25,14 +25,15 @@ CREATE TABLE produtos (
     descricao VARCHAR(200),
     preco DECIMAL(10,2),
     categoria VARCHAR(50),
-    disponivel BOOLEAN,
-    restaurante_id INT
+    disponivel TINYINT(1),
+    restaurante_id INT,
+    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
 );
 
 CREATE TABLE pedidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero_pedido VARCHAR(20) NOT NULL,
-    data_pedido TIMESTAMP,
+    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20),
     valor_total DECIMAL(10,2),
     observacoes VARCHAR(200),

@@ -1,8 +1,9 @@
 package com.deliverytech.delivery_api.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.deliverytech.delivery_api.entity.PedidoDTO;
+import com.deliverytech.delivery_api.dto.PedidoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,5 +85,22 @@ public class PedidoService {
         pedido.setStatus(status.name());
         return pedidoRepository.save(pedido);
     }
-    
+    // Pedidos por cliente
+    public List<Pedido> buscarPedidosPorCliente(Long clienteId) {
+        return pedidoRepository.findByClienteId(clienteId);
+    }
+    // listar por status
+    public List<Pedido> listarPorStatus(StatusPedido status) {
+        return pedidoRepository.findByStatus(status);
+    }
+    // Listar os 10 pedidos mais recentes
+    public List<Pedido> listarRecentes() {
+        return pedidoRepository.findTop10ByOrderByDataPedidoDesc();
+    }
+    /**
+     * Listar pedidos por período
+     */
+    public List<Pedido> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        return pedidoRepository.findByDataPedidoBetween(inicio, fim);
+    }
 }

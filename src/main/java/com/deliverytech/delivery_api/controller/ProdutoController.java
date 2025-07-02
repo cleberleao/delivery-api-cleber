@@ -108,4 +108,35 @@ public class ProdutoController {
         }
     }
 
+    // Apenas produtos disponíveis
+    @GetMapping("/disponiveis")
+    public ResponseEntity<?> listarDisponiveis() {
+        try {
+            return ResponseEntity.ok(produtoService.buscarDisponiveis());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro interno do servidor");
+        }
+    }
+    // Produtos por categoria
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<?> buscarPorCategoria(@PathVariable String categoria) {
+        try {
+            return ResponseEntity.ok(produtoService.buscarPorCategoria(categoria));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro interno do servidor");
+        }
+    }
+    // Produtos por faixa de preço (menor ou igual)
+    @GetMapping("/preco/{preco}")
+    public ResponseEntity<?> buscarPorPreco(@PathVariable BigDecimal preco) {
+        try {
+            return ResponseEntity.ok(produtoService.buscarPorFaixaDePreco(preco));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro interno do servidor");
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.deliverytech.delivery_api.dto.ClienteRequestDTO;
+import com.deliverytech.delivery_api.dto.ClienteResponseDTO;
 import com.deliverytech.delivery_api.entity.Cliente;
 import com.deliverytech.delivery_api.services.ClienteService;
 
@@ -29,9 +32,44 @@ public class ClienteController {
    @Autowired
     private ClienteService clienteService;
 
+    @PostMapping
+    public ResponseEntity<ClienteResponseDTO> cadastrar(@Validated @RequestBody ClienteRequestDTO dto) {
+        ClienteResponseDTO cliente = clienteService.cadastrar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
+        ClienteResponseDTO cliente = clienteService.buscarPorId(id);
+        return ResponseEntity.ok(cliente);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ClienteResponseDTO> buscarPorEmail(@PathVariable String email) {
+        ClienteResponseDTO cliente = clienteService.buscarPorEmail(email);
+        return ResponseEntity.ok(cliente);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ClienteResponseDTO>> listarAtivos() {
+        List<ClienteResponseDTO> clientes = clienteService.listarAtivos();
+        return ResponseEntity.ok(clientes);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id,
+                                                       @Validated @RequestBody ClienteRequestDTO dto) {
+        ClienteResponseDTO clienteAtualizado = clienteService.atualizar(id, dto);
+        return ResponseEntity.ok(clienteAtualizado);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ClienteResponseDTO> ativarDesativarCliente(@PathVariable Long id) {
+        ClienteResponseDTO clienteAtualizado = clienteService.ativarDesativarCliente(id);
+        return ResponseEntity.ok(clienteAtualizado);
+    }
+
     /**
-     * Cadastrar novo cliente
-     */
     @PostMapping
     public ResponseEntity<?> cadastrar(@Validated @RequestBody Cliente cliente) {
         try {
@@ -44,19 +82,11 @@ public class ClienteController {
                 .body("Erro interno do servidor");
         }
     }
-
-    /**
-     * Listar todos os clientes ativos
-     */
     @GetMapping
     public ResponseEntity<List<Cliente>> listar() {
         List<Cliente> clientes = clienteService.listarAtivos();
         return ResponseEntity.ok(clientes);
     }
-
-    /**
-     * Buscar cliente por ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         Optional<Cliente> cliente = clienteService.buscarPorId(id);
@@ -67,10 +97,6 @@ public class ClienteController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    /**
-     * Atualizar cliente
-     */
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
                                       @Validated @RequestBody Cliente cliente) {
@@ -84,10 +110,6 @@ public class ClienteController {
                 .body("Erro interno do servidor");
         }
     }
-
-    /**
-     * Inativar cliente (soft delete)
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> inativar(@PathVariable Long id) {
         try {
@@ -100,19 +122,11 @@ public class ClienteController {
                 .body("Erro interno do servidor");
         }
     }
-
-    /**
-     * Buscar clientes por nome
-     */
     @GetMapping("/buscar")
     public ResponseEntity<List<Cliente>> buscarPorNome(@RequestParam String nome) {
         List<Cliente> clientes = clienteService.buscarPorNome(nome);
         return ResponseEntity.ok(clientes);
     }
-
-    /**
-     * Buscar cliente por email
-     */
     @GetMapping("/email/{email}")
     public ResponseEntity<?> buscarPorEmail(@PathVariable String email) {
         Optional<Cliente> cliente = clienteService.buscarPorEmail(email);
@@ -123,4 +137,5 @@ public class ClienteController {
             return ResponseEntity.notFound().build();
         }
     }
+    **/
 }

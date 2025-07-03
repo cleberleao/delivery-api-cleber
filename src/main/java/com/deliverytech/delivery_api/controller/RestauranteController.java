@@ -1,6 +1,6 @@
 package com.deliverytech.delivery_api.controller;
 
-import com.deliverytech.delivery_api.dto.RestauranteDTO;
+import com.deliverytech.delivery_api.dto.RestauranteRequestDTO;
 import com.deliverytech.delivery_api.projection.RelatorioVendas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +49,7 @@ public class RestauranteController {
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
-            Optional<RestauranteDTO> restaurante = restauranteService.findById(id);
+            Optional<RestauranteRequestDTO> restaurante = restauranteService.findById(id);
             if (restaurante != null) {
                 return ResponseEntity.ok(restaurante);
             } else {

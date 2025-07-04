@@ -1,6 +1,5 @@
 package com.deliverytech.delivery_api.controller;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.deliverytech.delivery_api.dto.ItemPedidoRequestDTO;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.deliverytech.delivery_api.entity.Pedido;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 import com.deliverytech.delivery_api.services.PedidoService;
 

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,9 +100,6 @@ public class ProdutoServiceImpl implements ProdutoService {
         Produto produto = produtoRepository.findByNome(nome);
         if(!produto.getDisponivel()){
             throw new BusinessException ("Produto indisponível: " + nome);
-        }
-        else if (produto == null) {
-                throw new BusinessException("Produto não encontrado: " + nome);
         }
         // Converter entidade para DTO
         return modelMapper.map(produto, ProdutoResponseDTO.class);

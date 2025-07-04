@@ -2,6 +2,8 @@ package com.deliverytech.delivery_api.services.impl;
 
 import java.util.List;
 
+import com.deliverytech.delivery_api.entity.Cliente;
+import com.deliverytech.delivery_api.exception.BusinessException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,118 +24,92 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-    public Cliente cadastrar(Cliente cliente) {
-        // Validar email único
-        if (clienteRepository.existsByEmail(cliente.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado: " + cliente.getEmail());
-        }
-
-        // Validações de negócio
-        validarDadosCliente(cliente);
-
-        // Definir como ativo por padrão
-        cliente.setAtivo(true);
-
-        return clienteRepository.save(cliente);
-    }
-        
-    @Transactional(readOnly = true)
-    public Optional<Cliente> buscarPorId(Long id) {
-        return clienteRepository.findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Cliente> buscarPorEmail(String email) {
-        return clienteRepository.findByEmail(email);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Cliente> listarAtivos() {
-        return clienteRepository.findByAtivoTrue();
-    } 
-
-    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
-        Cliente cliente = buscarPorId(id)
-            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
-
-        // Verificar se email não está sendo usado por outro cliente
-        if (!cliente.getEmail().equals(clienteAtualizado.getEmail()) &&
-            clienteRepository.existsByEmail(clienteAtualizado.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado: " + clienteAtualizado.getEmail());
-        }
-
-        // Atualizar campos
-        cliente.setNome(clienteAtualizado.getNome());
-        cliente.setEmail(clienteAtualizado.getEmail());
-        cliente.setTelefone(clienteAtualizado.getTelefone());
-        cliente.setEndereco(clienteAtualizado.getEndereco());
-
-        return clienteRepository.save(cliente);
-    }
-
-    public void inativar(Long id) {
-        Cliente cliente = buscarPorId(id)
-            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
-
-        cliente.inativar();
-        clienteRepository.save(cliente);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Cliente> buscarPorNome(String nome) {
-        return clienteRepository.findByNomeContainingIgnoreCase(nome);
-    }
-
-    private void validarDadosCliente(Cliente cliente) {
-        if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome é obrigatório");
-        }
-
-        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("Email é obrigatório");
-        }
-
-        if (cliente.getNome().length() < 2) {
-            throw new IllegalArgumentException("Nome deve ter pelo menos 2 caracteres");
-        }
-    }
-    **/
-
     @Override
     public ClienteResponseDTO cadastrar(ClienteRequestDTO dto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cadastrar'");
+        // Validar email único
+        if (clienteRepository.existsByEmail(dto.getEmail())) {
+            throw new BusinessException("Email já cadastrado: " + dto.getEmail());
+        }
+        // Converter DTO para entidade
+        Cliente cliente = modelMapper.map(dto, Cliente.class);
+        cliente.setAtivo(true);
+        // Salvar cliente
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+        // Retornar DTO de resposta
+        return modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
     }
 
     @Override
     public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO dto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'atualizar'");
+        // Buscar cliente existente
+        Cliente clienteExistente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado: " + id));
+        // Validar dados do cliente
+        if (dto.getNome() == null || dto.getNome().isEmpty()) {
+            throw new BusinessException("Nome do cliente é obrigatório");
+        }
+        if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
+            throw new BusinessException("Email do cliente é obrigatório");
+        }
+        // Atualizar dados do cliente
+        clienteExistente.setNome(dto.getNome());
+        clienteExistente.setEmail(dto.getEmail());
+        clienteExistente.setTelefone(dto.getTelefone());
+        clienteExistente.setEndereco(dto.getEndereco());
+        // Salvar cliente atualizado
+        Cliente clienteAtualizado = clienteRepository.save(clienteExistente);
+        // Retornar DTO de resposta
+        return modelMapper.map(clienteAtualizado, ClienteResponseDTO.class);
     }
 
     @Override
     public ClienteResponseDTO ativarDesativarCliente(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ativarDesativarCliente'");
+        // Buscar cliente existente
+        Cliente clienteExistente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado: " + id));
+        // Inverter status de ativo
+        clienteExistente.setAtivo(!clienteExistente.getAtivo());
+        // Salvar cliente atualizado
+        Cliente clienteAtualizado = clienteRepository.save(clienteExistente);
+        // Retornar DTO de resposta
+        return modelMapper.map(clienteAtualizado, ClienteResponseDTO.class);
     }
 
     @Override
     public ClienteResponseDTO buscarPorId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+        // Buscar cliente por ID
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado: " + id));
+        // Converter entidade para DTO
+        return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
     @Override
     public ClienteResponseDTO buscarPorEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorEmail'");
+        // Buscar cliente por email
+        Cliente cliente = clienteRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado com email: " + email));
+        // Converter entidade para DTO
+        return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
     @Override
     public List<ClienteResponseDTO> listarAtivos() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listarAtivos'");
+        // Buscar clientes ativos
+        List<Cliente> clientesAtivos = clienteRepository.findByAtivoTrue();
+        // Converter lista de entidades para lista de DTOs
+        return clientesAtivos.stream()
+                .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
+                .toList();
     }
-    
+    //buscar por nome
+    @Override
+    public List<ClienteResponseDTO> buscarPorNome(String nome) {
+        // Buscar clientes por nome
+        List<Cliente> clientes = clienteRepository.findByNomeContainingIgnoreCase(nome);
+        // Converter lista de entidades para lista de DTOs
+        return clientes.stream()
+                .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
+                .toList();
+    }
 }

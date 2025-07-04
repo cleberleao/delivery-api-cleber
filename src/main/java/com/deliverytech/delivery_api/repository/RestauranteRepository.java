@@ -7,7 +7,6 @@ import java.util.Optional;
 import com.deliverytech.delivery_api.projection.RelatorioVendas;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -17,6 +16,9 @@ import com.deliverytech.delivery_api.entity.Restaurante;
 public interface RestauranteRepository extends JpaRepository <Restaurante, Long>{
     // Buscar por nome
     Optional<Restaurante> findByNome(String nome);
+
+    //buscar por nome e ativo
+    Restaurante findByNomeAndAtivoTrue(String nome);
 
     // Buscar restaurantes ativos
     List<Restaurante> findByAtivoTrue();
@@ -39,4 +41,5 @@ public interface RestauranteRepository extends JpaRepository <Restaurante, Long>
             "GROUP BY r.id, r.nome")
     List<RelatorioVendas> relatorioVendasPorRestaurante();
 
+    List<Restaurante> findByTaxaEntregaBetween(BigDecimal precoMinimo, BigDecimal precoMaximo);
 }

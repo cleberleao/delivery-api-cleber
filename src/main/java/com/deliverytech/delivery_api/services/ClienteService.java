@@ -18,5 +18,6 @@ public interface ClienteService {
     ClienteResponseDTO ativarDesativarCliente(Long id);
 
     List<ClienteResponseDTO> listarAtivos();
-    
+
+    List<ClienteResponseDTO> buscarPorNome(String nome);
 }

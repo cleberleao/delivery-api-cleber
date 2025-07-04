@@ -43,9 +43,9 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelarPedido(@PathVariable Long id) {
-        pedidoService.cancelarPedido(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PedidoResponseDTO> cancelarPedido(@PathVariable Long id) {
+        PedidoResponseDTO pedido = pedidoService.cancelarPedido(id);
+        return ResponseEntity.ok(pedido);
     }
     @PostMapping("/calcular")
     public ResponseEntity<BigDecimal> calcularValorTotalPedido(@RequestBody List<ItemPedidoRequestDTO> itens) {
@@ -53,55 +53,12 @@ public class PedidoController {
         return ResponseEntity.ok(valorTotal);
     }
 
-    /**
-    @PostMapping
-    public ResponseEntity<?> criarPedido(@RequestBody PedidoRequestDTO dto) {
-        try {
-            Pedido pedido = pedidoService.criarPedido(dto);
-            return ResponseEntity.ok(pedido);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor");
-        }
+    @PutMapping("/{id}/{status}")
+    public ResponseEntity<PedidoResponseDTO> atualizarStatus(
+            @PathVariable Long id,
+            @PathVariable StatusPedido status) {
+        PedidoResponseDTO dto = pedidoService.atualizarStatusPedido(id, status);
+        return ResponseEntity.ok(dto);
     }
-    @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<Pedido>> listarPorCliente(@PathVariable Long clienteId) {
-        List<Pedido> pedidos = pedidoService.listarPorCliente(clienteId);
-        return ResponseEntity.ok(pedidos);
-    }
-    @PutMapping("/{pedidoId}/{status}")
-    public ResponseEntity<?> atualizarStatus(@PathVariable Long pedidoId,
-                                            @PathVariable StatusPedido status) {
-        try {
-            Pedido pedido = pedidoService.atualizarStatus(pedidoId, status);
-            return ResponseEntity.ok(pedido);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
-    }
-    // Pedidos por cliente
-    @GetMapping("/cliente/{clienteId}/todos")
-    public ResponseEntity<List<Pedido>> buscarPedidosPorCliente(@PathVariable Long clienteId) {
-        List<Pedido> pedidos = pedidoService.buscarPedidosPorCliente(clienteId);
-        return ResponseEntity.ok(pedidos);
-    }
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Pedido>> listarPorStatus(@PathVariable StatusPedido status) {
-        List<Pedido> pedidos = pedidoService.listarPorStatus(status);
-        return ResponseEntity.ok(pedidos);
-    }
-    @GetMapping("/recentes")
-    public ResponseEntity<List<Pedido>> listarRecentes() {
-        List<Pedido> pedidos = pedidoService.listarRecentes();
-        return ResponseEntity.ok(pedidos);
-    }
-    // Pedidos por período
-    @GetMapping("/periodo")
-    public ResponseEntity<List<Pedido>> listarPorPeriodo(@RequestParam String inicio, @RequestParam String fim) {
-        List<Pedido> pedidos = pedidoService.listarPorPeriodo(LocalDateTime.parse(inicio), LocalDateTime.parse(fim));
-        return ResponseEntity.ok(pedidos);
-    }
-    **/
+
 }

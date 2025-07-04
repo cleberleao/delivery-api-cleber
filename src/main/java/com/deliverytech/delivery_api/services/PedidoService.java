@@ -6,6 +6,7 @@ import java.util.List;
 import com.deliverytech.delivery_api.dto.ItemPedidoRequestDTO;
 import com.deliverytech.delivery_api.dto.PedidoRequestDTO;
 import com.deliverytech.delivery_api.dto.PedidoResponseDTO;
+import com.deliverytech.delivery_api.entity.Pedido;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 
 
@@ -22,5 +23,5 @@ public interface PedidoService {
 
     BigDecimal calcularValorTotalPedido(List<ItemPedidoRequestDTO> itens );
 
-    Void cancelarPedido(Long id);
+    PedidoResponseDTO cancelarPedido(Long id);
 } 

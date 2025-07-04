@@ -1,15 +1,10 @@
 package com.deliverytech.delivery_api.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class RestauranteDTO {
+public class RestauranteResponseDTO {
 
     private Long id;
     private String nome;

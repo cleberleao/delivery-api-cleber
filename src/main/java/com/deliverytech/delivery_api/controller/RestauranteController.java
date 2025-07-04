@@ -1,19 +1,18 @@
 package com.deliverytech.delivery_api.controller;
 
-import com.deliverytech.delivery_api.dto.RestauranteDTO;
+import com.deliverytech.delivery_api.dto.RestauranteRequestDTO;
+import com.deliverytech.delivery_api.dto.RestauranteResponseDTO;
 import com.deliverytech.delivery_api.projection.RelatorioVendas;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.deliverytech.delivery_api.entity.Restaurante;
 import com.deliverytech.delivery_api.services.RestauranteService;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -24,124 +23,71 @@ public class RestauranteController {
     private RestauranteService restauranteService;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Validated @RequestBody Restaurante restaurante) {
-        try {
-            Restaurante restauranteSalvo = restauranteService.cadastrar(restaurante);
-            return ResponseEntity.status(HttpStatus.CREATED).body(restauranteSalvo);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
+    public ResponseEntity<RestauranteResponseDTO> cadastrar(@Valid @RequestBody RestauranteRequestDTO dto) {
+        RestauranteResponseDTO restaurante = restauranteService.cadastrar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
     }
 
     @GetMapping
-    public ResponseEntity<?> listarTodos() {
-        try {
-            return ResponseEntity.ok(restauranteService.listarAtivos());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
+    public ResponseEntity<List<RestauranteResponseDTO>> listarTodos() {
+        List<RestauranteResponseDTO> restaurantes = restauranteService.listarAtivos();
+        return ResponseEntity.ok(restaurantes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Optional<RestauranteDTO> restaurante = restauranteService.findById(id);
-            if (restaurante != null) {
-                return ResponseEntity.ok(restaurante);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante não encontrado");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
+    public ResponseEntity<RestauranteResponseDTO> buscarPorId(@PathVariable Long id) {
+        RestauranteResponseDTO restaurante = restauranteService.buscarPorId(id);
+        return ResponseEntity.ok(restaurante);
     }
-
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @Validated @RequestBody Restaurante restaurante) {
-        try {
-            Restaurante atualizado = restauranteService.atualizar(id, restaurante);
-            return ResponseEntity.ok(atualizado);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
+    public ResponseEntity<RestauranteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody RestauranteRequestDTO dto) {
+        RestauranteResponseDTO restauranteAtualizado = restauranteService.atualizar(id, dto);
+        return ResponseEntity.ok(restauranteAtualizado);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
-        try {
-            restauranteService.deletar(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Erro interno do servidor");
-        }
+    @PatchMapping("/{id}/ativar-desativar")
+    public ResponseEntity<RestauranteResponseDTO> ativarDesativarRestaurante(@PathVariable Long id) {
+        RestauranteResponseDTO restauranteAtualizado = restauranteService.ativarDesativarRestaurante(id);
+        return ResponseEntity.ok(restauranteAtualizado);
     }
-    //desativar restaurante
-        @PutMapping("/{id}/inativar")
-        public ResponseEntity<?> inativar(@PathVariable Long id) {
-            try {
-                restauranteService.inativar(id);
-                return ResponseEntity.ok().body("Restaurante inativado com sucesso");
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-            }
-        }
-        //buscar por categoria
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<RestauranteResponseDTO> buscarPorNome(@PathVariable String nome) {
+        RestauranteResponseDTO restaurante = restauranteService.buscarPorNome(nome);
+        return ResponseEntity.ok(restaurante);
+    }
+    @GetMapping("/preco/{precoMinimo}/{precoMaximo}")
+    public ResponseEntity<List<RestauranteResponseDTO>> buscarPorPreco(@PathVariable BigDecimal precoMinimo, @PathVariable BigDecimal precoMaximo) {
+        List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorPreco(precoMinimo, precoMaximo);
+        return ResponseEntity.ok(restaurantes);
+    }
     @GetMapping("/categoria/{categoria}")
-        public ResponseEntity<?> buscarPorCategoria(@PathVariable String categoria) {
-            try {
-                return ResponseEntity.ok(restauranteService.buscarPorCategoria(categoria));
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-            }
-        }
-    //buscar por taxa de entrega menor ou igual
+    public ResponseEntity<List<RestauranteResponseDTO>> buscarPorCategoria(@PathVariable String categoria) {
+        List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorCategoria(categoria);
+        return ResponseEntity.ok(restaurantes);
+    }
+
+    //inativar restaurante
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<RestauranteResponseDTO> inativarRestaurante(@PathVariable Long id) {
+        RestauranteResponseDTO restauranteInativado = restauranteService.inativarRestaurante(id);
+        return ResponseEntity.ok(restauranteInativado);
+    }
+    //listar taxa de entrega menor ou igual
     @GetMapping("/taxa-entrega")
-    public ResponseEntity<?> buscarPorTaxaEntregaMenorOuIgual(@RequestParam BigDecimal taxa) {
-        try {
-            List<Restaurante> restaurantes = restauranteService.buscarPorTaxaEntregaMenorOuIgual(taxa);
-            return ResponseEntity.ok(restaurantes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-        }
+    public ResponseEntity<List<RestauranteResponseDTO>> buscarPorTaxaEntrega(@RequestParam BigDecimal taxa) {
+        List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorTaxaEntrega(taxa);
+        return ResponseEntity.ok(restaurantes);
     }
-
-    // Buscar top 5 restaurantes por nome
+    // Listar os 5 primeiros restaurantes por nome
     @GetMapping("/top-cinco")
-    public ResponseEntity<?> buscarTop5PorNomeAsc() {
-        try {
-            List<Restaurante> restaurantes = restauranteService.buscarTop5PorNomeAsc();
-            return ResponseEntity.ok(restaurantes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-        }
+    public ResponseEntity<List<RestauranteResponseDTO>> listarTop5PorNome() {
+        List<RestauranteResponseDTO> top5Restaurantes = restauranteService.listarTop5PorNome();
+        return ResponseEntity.ok(top5Restaurantes);
+    }
+    //relatorio-vendas
+    @GetMapping("/relatorio-vendas")
+    public ResponseEntity<List<RelatorioVendas>> relatorioVendasPorRestaurante() {
+        List<RelatorioVendas> relatorio = restauranteService.relatorioVendasPorRestaurante();
+        return ResponseEntity.ok(relatorio);
     }
 
-    // Relatório de vendas por restaurante
-    @GetMapping("/relatorio-vendas")
-    public ResponseEntity<?> relatorioVendasPorRestaurante() {
-        try {
-            List<RelatorioVendas> relatorio = restauranteService.relatorioVendasPorRestaurante();
-            return ResponseEntity.ok(relatorio);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor");
-        }
-    }
 }

@@ -4,10 +4,10 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 
 ## 🚀 Tecnologias
 - **Java 21 LTS** (versão mais recente)
-- Spring Boot 3.2.x
+- Spring Boot 3.4.x
 - Spring Web
 - Spring Data JPA
-- H2 Database
+- MySQL Database
 - Maven
 
 ## ⚡ Recursos Modernos Utilizados
@@ -26,12 +26,13 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 - GET /health - Status da aplicação (inclui versão Java)
 - GET /info - Informações da aplicação
 - GET /h2-console - Console do banco H2
+- Acesse o Swagger em: http://localhost:8080/swagger-ui/
 
 ## 🔧 Configuração
 - Porta: 8080
-- Banco: H2 em memória
+- Banco: MySQL
 - Profile: development
 
 ## 👨‍💻 Desenvolvedor
-[Seu Nome] - [Sua Turma]  
-Desenvolvido com JDK 21 e Spring Boot 3.2.x
+Professor Cleber Leão - Arquitetura de sistemas 
+Desenvolvido com JDK 21 e Spring Boot 3.4.x

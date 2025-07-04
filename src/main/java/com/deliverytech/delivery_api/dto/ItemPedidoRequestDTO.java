@@ -1,0 +1,17 @@
+package com.deliverytech.delivery_api.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class ItemPedidoRequestDTO {
+    @NotNull(message = "O produto é obrigatório")
+    private Long produtoId;
+    @NotNull(message = "A quantidade é obrigatória")
+    @Min(value = 1, message = "A quantidade deve ser pelo menos 1")
+    @Max(value = 10, message = "A quantidade não pode ser maior que 100")
+    private Integer quantidade;
+
+}

@@ -22,5 +22,8 @@ public interface ProdutoRepository extends JpaRepository <Produto, Long> {
 
     // Por faixa de preço (menor ou igual)
     List<Produto> findByPrecoLessThanEqual(BigDecimal preco);
+
+    // Buscar produto por nome
+    Produto findByNome(String nome);
     
 }

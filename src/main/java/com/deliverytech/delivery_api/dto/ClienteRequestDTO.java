@@ -2,6 +2,7 @@ package com.deliverytech.delivery_api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -14,7 +15,7 @@ public class ClienteRequestDTO {
     @Email(message = "O email deve ser válido")
     private String email;
 
-    @NotBlank(message = "O telefone é obrigatório")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "O telefone deve ser um número válido com 10 a 15 dígitos, podendo iniciar com '+'")
     private String telefone;
     
     @NotBlank(message = "O endereço é obrigatório")

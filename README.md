@@ -27,6 +27,8 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 - GET /info - Informações da aplicação
 - GET /h2-console - Console do banco H2
 - Acesse o Swagger em: http://localhost:8080/swagger-ui/
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- API Docs: http://localhost:8080/api-docs
 
 ## 🔧 Configuração
 - Porta: 8080

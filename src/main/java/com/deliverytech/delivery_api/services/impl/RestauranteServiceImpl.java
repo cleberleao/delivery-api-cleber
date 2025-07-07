@@ -1,12 +1,10 @@
 package com.deliverytech.delivery_api.services.impl;
 
-import com.deliverytech.delivery_api.dto.RestauranteRequestDTO;
-import com.deliverytech.delivery_api.dto.RestauranteResponseDTO;
+import com.deliverytech.delivery_api.dto.request.RestauranteRequestDTO;
+import com.deliverytech.delivery_api.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery_api.entity.Restaurante;
 import com.deliverytech.delivery_api.exception.BusinessException;
 import com.deliverytech.delivery_api.projection.RelatorioVendas;
-import com.deliverytech.delivery_api.repository.PedidoRepository;
-import com.deliverytech.delivery_api.repository.ProdutoRepository;
 import com.deliverytech.delivery_api.repository.RestauranteRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -23,12 +21,6 @@ import java.util.Optional;
 public class RestauranteServiceImpl implements RestauranteService {
     @Autowired
     private RestauranteRepository restauranteRepository;
-
-    @Autowired
-    private ProdutoRepository produtoRepository;
-
-    @Autowired
-    private PedidoRepository pedidoRepository;
 
     @Autowired
     private ModelMapper modelMapper;

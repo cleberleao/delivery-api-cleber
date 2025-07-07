@@ -1,7 +1,7 @@
 package com.deliverytech.delivery_api.services.impl;
 
-import com.deliverytech.delivery_api.dto.ProdutoRequestDTO;
-import com.deliverytech.delivery_api.dto.ProdutoResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ProdutoRequestDTO;
+import com.deliverytech.delivery_api.dto.response.ProdutoResponseDTO;
 import com.deliverytech.delivery_api.entity.Produto;
 import com.deliverytech.delivery_api.entity.Restaurante;
 import com.deliverytech.delivery_api.exception.BusinessException;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,9 +100,6 @@ public class ProdutoServiceImpl implements ProdutoService {
         Produto produto = produtoRepository.findByNome(nome);
         if(!produto.getDisponivel()){
             throw new BusinessException ("Produto indisponível: " + nome);
-        }
-        else if (produto == null) {
-                throw new BusinessException("Produto não encontrado: " + nome);
         }
         // Converter entidade para DTO
         return modelMapper.map(produto, ProdutoResponseDTO.class);

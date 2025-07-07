@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.deliverytech.delivery_api.dto.ProdutoResponseDTO;
 import com.deliverytech.delivery_api.entity.*;
 import com.deliverytech.delivery_api.exception.BusinessException;
 import com.deliverytech.delivery_api.exception.EntityNotFoundException;
@@ -14,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliverytech.delivery_api.dto.ItemPedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ItemPedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.request.PedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.response.PedidoResponseDTO;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 import com.deliverytech.delivery_api.repository.ClienteRepository;
 import com.deliverytech.delivery_api.repository.PedidoRepository;
@@ -149,6 +148,10 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado com ID: " + id));
         // Atualizar status do pedido
+        isTransicaoValida(status, status);
+        if (!isTransicaoValida(StatusPedido.valueOf(pedido.getStatus()), status)) {
+            throw new BusinessException("Transição de status inválida para o pedido com ID: " + id);
+        }
         pedido.setStatus(status.name());
         // Salvar pedido atualizado
         Pedido pedidoAtualizado = pedidoRepository.save(pedido);
@@ -178,6 +181,10 @@ public class PedidoServiceImpl implements PedidoService {
             throw new RuntimeException("Pedido já está cancelado: " + id);
         }
         // Atualizar status do pedido para CANCELADO
+        podeSerCancelado(StatusPedido.valueOf(pedido.getStatus()));
+        if (!podeSerCancelado(StatusPedido.valueOf(pedido.getStatus()))) {  
+            throw new BusinessException("Pedido não pode ser cancelado, status atual: " + pedido.getStatus());
+        }
         pedido.setStatus(StatusPedido.CANCELADO.name());
         // Salvar pedido atualizado
         pedidoRepository.save(pedido);

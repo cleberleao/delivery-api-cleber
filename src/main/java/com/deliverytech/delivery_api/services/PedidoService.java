@@ -3,9 +3,9 @@ package com.deliverytech.delivery_api.services;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.deliverytech.delivery_api.dto.ItemPedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ItemPedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.request.PedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.response.PedidoResponseDTO;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 
 

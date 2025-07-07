@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliverytech.delivery_api.dto.ClienteRequestDTO;
-import com.deliverytech.delivery_api.dto.ClienteResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ClienteRequestDTO;
+import com.deliverytech.delivery_api.dto.response.ClienteResponseDTO;
 import com.deliverytech.delivery_api.repository.ClienteRepository;
 import com.deliverytech.delivery_api.services.ClienteService;
 

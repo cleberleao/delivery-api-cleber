@@ -1,8 +1,8 @@
 package com.deliverytech.delivery_api.services;
 
 
-import com.deliverytech.delivery_api.dto.ProdutoRequestDTO;
-import com.deliverytech.delivery_api.dto.ProdutoResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ProdutoRequestDTO;
+import com.deliverytech.delivery_api.dto.response.ProdutoResponseDTO;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliverytech.delivery_api.dto.ItemPedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoRequestDTO;
-import com.deliverytech.delivery_api.dto.PedidoResponseDTO;
+import com.deliverytech.delivery_api.dto.request.ItemPedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.request.PedidoRequestDTO;
+import com.deliverytech.delivery_api.dto.response.PedidoResponseDTO;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 import com.deliverytech.delivery_api.repository.ClienteRepository;
 import com.deliverytech.delivery_api.repository.PedidoRepository;

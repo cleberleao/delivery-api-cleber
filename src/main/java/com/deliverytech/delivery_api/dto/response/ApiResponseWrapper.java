@@ -15,8 +15,10 @@ public class ApiResponseWrapper<T> {
     @Schema(description = "Dados da Resposta")
     private T data;
 
+    @Schema(description = "Mensagem de resposta", example = "Operação realizada com sucesso")
     private String message;
 
+    @Schema(description = "Timestamp da resposta", example = "2023-10-01T12:00:00")
     private LocalDateTime timestamp;
 
     public ApiResponseWrapper(boolean success, T data, String message) {

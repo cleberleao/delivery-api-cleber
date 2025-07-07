@@ -34,11 +34,14 @@ public class RestauranteRequestDTO {
     @NotNull(message = "A taxa de entrega do restaurante é obrigatória")
     private BigDecimal taxaEntrega;
 
-    @Schema(description = "Avaliação do restaurante", example = "4.5", required = true)
+    @Schema(description = "Avaliação do restaurante", example = "4.5")
     private BigDecimal avaliacao;
 
     @Schema(description = "Status do restaurante", example = "true", required = true)
     @NotNull(message = "O status do restaurante é obrigatório")
     private Boolean ativo = true;
 
+    public Boolean isAtivo() {
+        return ativo != null ? ativo : true; // Retorna true se ativo for null
+    }
 }

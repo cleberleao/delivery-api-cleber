@@ -16,6 +16,7 @@ public class PagedResponseWrapper<T> {
     @Schema(description = "Informações da paginação")
     private PageInfo page;
 
+    @Schema(description = "Links de navegação da página")
     private PageLinks links;
 
     public PagedResponseWrapper(Page<T> page) {

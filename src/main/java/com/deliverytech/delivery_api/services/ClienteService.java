@@ -20,4 +20,5 @@ public interface ClienteService {
     List<ClienteResponseDTO> listarAtivos();
 
     List<ClienteResponseDTO> buscarPorNome(String nome);
+    
 }

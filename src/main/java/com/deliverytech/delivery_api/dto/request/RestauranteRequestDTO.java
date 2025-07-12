@@ -22,6 +22,11 @@ public class RestauranteRequestDTO {
     @NotNull(message = "A categoria do restaurante é obrigatória")
     private String categoria;
 
+    @Schema(description = "CEP do restaurante", example = "12345-678", required = true)
+    @NotNull(message = "O CEP do restaurante é obrigatório")
+    @Pattern(regexp = "^\\d{5}-?\\d{3}$", message = "O CEP deve estar no formato 12345-678 ou 12345678")
+    private String cep;
+
     @Schema(description = "Endereço do restaurante", example = "Rua das Flores, 123", required = true)
     @NotNull(message = "O endereço do restaurante é obrigatório")
     private String endereco;

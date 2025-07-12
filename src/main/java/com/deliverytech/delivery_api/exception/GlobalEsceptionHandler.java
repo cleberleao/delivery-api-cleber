@@ -4,64 +4,89 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
+import com.deliverytech.delivery_api.dto.response.ErrorResponseDTO;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@ControllerAdvice
 public class GlobalEsceptionHandler {
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ValidationErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
-        ValidationErrorResponse error = new ValidationErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                "Entidade não encontrada",
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ValidationErrorResponse> handleBusinessException(BusinessException ex) {
-        ValidationErrorResponse error = new ValidationErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Erro de regra de negócio",
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidationException(
-            MethodArgumentNotValidException ex) {
+   @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleValidationExceptions(
+            MethodArgumentNotValidException ex, WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
 
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Dados inválidos",
-                errors.toString(),
-                LocalDateTime.now()
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+            HttpStatus.BAD_REQUEST.value(),
+            "Dados inválidos",
+            "Erro de validação nos dados enviados",
+            request.getDescription(false).replace("uri=", "")
         );
+        errorResponse.setErrorCode("VALIDATION_ERROR");
+        errorResponse.setDetails(errors);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEntityNotFoundException(
+            EntityNotFoundException ex, WebRequest request) {
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+            HttpStatus.NOT_FOUND.value(),
+            "Entidade não encontrada",
+            ex.getMessage(),
+            request.getDescription(false).replace("uri=", "")
+        );
+        errorResponse.setErrorCode(ex.getErrorCode());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConflictException(
+            ConflictException ex, WebRequest request) {
+
+        Map<String, String> details = new HashMap<>();
+        if (ex.getConflictField() != null) {
+            details.put(ex.getConflictField(), ex.getConflictValue().toString());
+        }
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+            HttpStatus.CONFLICT.value(),
+            "Conflito de dados",
+            ex.getMessage(),
+            request.getDescription(false).replace("uri=", "")
+        );
+        errorResponse.setErrorCode(ex.getErrorCode());
+        errorResponse.setDetails(details.isEmpty() ? null : details);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ValidationErrorResponse> handleGenericException(Exception ex) {
-        ValidationErrorResponse error = new ValidationErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Erro interno do servidor",
-                "Ocorreu um erro inesperado",
-                LocalDateTime.now()
+    public ResponseEntity<ErrorResponseDTO> handleGenericException(
+            Exception ex, WebRequest request) {
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Erro interno do servidor",
+            "Ocorreu um erro inesperado. Tente novamente mais tarde.",
+            request.getDescription(false).replace("uri=", "")
         );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        errorResponse.setErrorCode("INTERNAL_ERROR");
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

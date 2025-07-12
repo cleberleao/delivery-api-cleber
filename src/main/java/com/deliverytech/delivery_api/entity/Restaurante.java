@@ -26,6 +26,8 @@ public class Restaurante {
 
     private String endereco;
 
+    private String cep;
+
     private String telefone;
 
     @Column(name = "taxa_entrega")

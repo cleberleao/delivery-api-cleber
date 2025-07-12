@@ -38,6 +38,8 @@ public class Pedido {
 
     @Column(name = "taxa_entrega")
     private BigDecimal taxaEntrega;
+    
+    private String cep;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens;

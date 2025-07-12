@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,7 @@ public class ItemPedidoRequestDTO {
 
     @Schema(description = "ID do produto", example = "1", required = true)
     @NotNull(message = "O produto é obrigatório")
+    @Positive(message = "Produto ID deve ser positivo")
     private Long produtoId;
 
     @Schema(description = "Quantidade do produto no pedido", example = "2", required = true)

@@ -6,6 +6,11 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.deliverytech.delivery_api.validation.ValidCEP;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 @Data
@@ -39,8 +44,13 @@ public class PedidoRequestDTO {
     @Schema(description = "Endereço de entrega do pedido", example = "Rua das Flores, 123")
     private String enderecoEntrega;
 
+    @NotBlank(message = "CEP é obrigatório")
+    @ValidCEP
+    private String cep;
+
     @Schema(description = "Lista de itens do pedido", required = true)
-    @NotNull(message = "Os itens são obrigatórios")
+    @NotEmpty(message = "Os itens são obrigatórios")
+    @Valid
     private List<ItemPedidoRequestDTO> itens;
 
 }

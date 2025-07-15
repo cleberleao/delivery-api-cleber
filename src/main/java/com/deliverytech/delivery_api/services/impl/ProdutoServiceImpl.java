@@ -33,7 +33,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ProdutoResponseDTO cadastrar(ProdutoRequestDTO dto) {
         // Converter DTO para entidade
         Produto produto = modelMapper.map(dto, Produto.class);
-        produto.setRestaurante(restauranteRepository.findById(dto.getRestauranteId()).get());
+        Restaurante restaurante = restauranteRepository.findById(dto.getRestauranteId()).get();
+        produto.setRestaurante(restaurante);
         // Salvar cliente
         Produto produtoSalvo = produtoRepository.save(produto);
         // Retornar DTO de resposta

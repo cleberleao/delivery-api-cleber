@@ -57,3 +57,6 @@ CREATE TABLE item_pedido (
     FOREIGN KEY (pedido_id) REFERENCES pedido(id),
     FOREIGN KEY (produto_id) REFERENCES produto(id)
 );
+
+ALTER TABLE restaurante ADD COLUMN cep VARCHAR(20);
+ALTER TABLE pedido ADD COLUMN cep VARCHAR(20);

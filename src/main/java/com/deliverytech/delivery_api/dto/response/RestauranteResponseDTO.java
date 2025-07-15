@@ -14,5 +14,6 @@ public class RestauranteResponseDTO {
     private BigDecimal taxaEntrega;
     private BigDecimal avaliacao;
     private Boolean ativo;
+    private String cep;
 
 }

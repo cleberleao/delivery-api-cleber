@@ -21,6 +21,7 @@ public class PedidoResponseDTO {
     private Restaurante restaurante;
     private String enderecoEntrega;
     private BigDecimal taxaEntrega;
+    private String cep;
     List<ItemPedidoRequestDTO> itens;
 
 }

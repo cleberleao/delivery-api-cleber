@@ -13,6 +13,8 @@ import lombok.Data;
         title = "Produto Request DTO")
 public class ProdutoRequestDTO {
 
+    private Long id;
+
     @Schema(description = "Nome do produto", example = "Pizza Margherita", required = true)
     @NotNull(message = "O Nome do produto é obrigatório")
     private String nome;

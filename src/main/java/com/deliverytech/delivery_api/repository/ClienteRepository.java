@@ -1,5 +1,7 @@
 package com.deliverytech.delivery_api.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import com.deliverytech.delivery_api.entity.Cliente;
 
@@ -22,5 +24,8 @@ public interface ClienteRepository extends JpaRepository <Cliente, Long> {
 
     // Buscar clientes por nome (contendo)
     List<Cliente> findByNomeContainingIgnoreCase(String nome);
+
+    // Buscar clientes ativos com paginação
+    Page<Cliente> findByAtivoTrue(Pageable pageable);
     
 }

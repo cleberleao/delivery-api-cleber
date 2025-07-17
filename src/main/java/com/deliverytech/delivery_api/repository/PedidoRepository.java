@@ -27,4 +27,5 @@ public interface PedidoRepository extends JpaRepository <Pedido, Long> {
     // Pedidos por período
     List<Pedido> findByDataPedidoBetween(LocalDateTime inicio, LocalDateTime fim);
 
+    List<Pedido> findByRestauranteId(Long restauranteId);
 }

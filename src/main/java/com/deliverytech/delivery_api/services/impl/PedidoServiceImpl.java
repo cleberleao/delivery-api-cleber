@@ -192,6 +192,19 @@ public class PedidoServiceImpl implements PedidoService {
         return modelMapper.map(pedido, PedidoResponseDTO.class);
     }
 
+    @Override
+    public List<PedidoResponseDTO> listarPedidoPorRestaurante(Long restauranteId) {
+        // Buscar pedidos por restaurante ID
+        List<Pedido> pedidos = pedidoRepository.findByRestauranteId(restauranteId);
+        if (pedidos.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum pedido encontrado para o restaurante com ID: " + restauranteId);
+        }
+        // Converter lista de entidades para lista de DTOs
+        return pedidos.stream()
+                .map(pedido -> modelMapper.map(pedido, PedidoResponseDTO.class))
+                .toList();
+    }
+
     private boolean isTransicaoValida(StatusPedido statusAtual, StatusPedido novoStatus) {
         // Implementar lógica de transições válidas
         switch (statusAtual) {

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.deliverytech.delivery_api.enums.StatusPedido;
@@ -36,6 +37,7 @@ public class PedidoController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
         @ApiResponse(responseCode = "409", description = "Pedido já existe")
     })
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<PedidoResponseDTO> criarPedido(@Valid @RequestBody PedidoRequestDTO dto) {
         PedidoResponseDTO pedido = pedidoService.criarPedido(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
@@ -60,6 +62,7 @@ public class PedidoController {
         @ApiResponse(responseCode = "200", description = "Pedidos encontrados"),
         @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<List<PedidoResponseDTO>> listarPedidosPorCliente(@PathVariable Long clienteId) {
         List<PedidoResponseDTO> pedidos = pedidoService.listarPedidosPorCliente(clienteId);
         return ResponseEntity.ok(pedidos);
@@ -100,6 +103,13 @@ public class PedidoController {
             @PathVariable StatusPedido status) {
         PedidoResponseDTO dto = pedidoService.atualizarStatusPedido(id, status);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/restaurante/{restaurante_id}")
+    @PreAuthorize("hasRole('RESTAURANTE')")
+    public ResponseEntity<List<PedidoResponseDTO>> listarPedidoPorRestaurante(@PathVariable Long restaurante_id) {
+        List<PedidoResponseDTO> pedidos = pedidoService.listarPedidoPorRestaurante(restaurante_id);
+        return ResponseEntity.ok(pedidos);
     }
 
 }

@@ -592,6 +592,27 @@
 					"response": []
 				},
 				{
+					"name": "Pedidos por restaurante",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pedidos/restaurante/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pedidos",
+								"restaurante",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Pedidos Por Status",
 					"request": {
 						"method": "GET",

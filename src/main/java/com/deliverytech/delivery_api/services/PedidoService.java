@@ -24,4 +24,5 @@ public interface PedidoService {
 
     PedidoResponseDTO cancelarPedido(Long id);
 
+    List<PedidoResponseDTO> listarPedidoPorRestaurante(Long restauranteId);
 } 

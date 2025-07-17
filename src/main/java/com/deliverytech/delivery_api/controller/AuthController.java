@@ -8,6 +8,10 @@ import com.deliverytech.delivery_api.entity.Usuario;
 import com.deliverytech.delivery_api.enums.Role;
 import com.deliverytech.delivery_api.repository.UsuarioRepository;
 import com.deliverytech.delivery_api.security.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -26,6 +30,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "Autenticação", description = "Operações de autenticação e registro de usuários")
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
@@ -37,6 +42,12 @@ public class AuthController {
     private ModelMapper modelMapper;
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar usuário", description = "Cria um novo usuário no sistema")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+        @ApiResponse(responseCode = "409", description = "Email já cadastrado")
+    })
     public ResponseEntity<LoginResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
         // Verifica se o email já está cadastrado
         if (usuarioRepository.existsByEmail(request.getEmail())) {
@@ -63,6 +74,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login de usuário", description = "Realiza o login de um usuário no sistema")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Credenciais ou Token inválidos"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha()));
         Usuario usuario = usuarioRepository.findByEmail(request.getEmail())

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.deliverytech.delivery_api.services.RestauranteService;
@@ -41,6 +42,7 @@ public class RestauranteController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
         @ApiResponse(responseCode = "409", description = "Restaurante já existe")
     })
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESTAURANTE')")
     public ResponseEntity<RestauranteResponseDTO> cadastrar(@Valid @RequestBody RestauranteRequestDTO dto) {
         RestauranteResponseDTO restaurante = restauranteService.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
@@ -81,6 +83,7 @@ public class RestauranteController {
         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANTE') and @restauranteService.isOwner(#id))")
     public ResponseEntity<RestauranteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody RestauranteRequestDTO dto) {
         RestauranteResponseDTO restauranteAtualizado = restauranteService.atualizar(id, dto);
         return ResponseEntity.ok(restauranteAtualizado);
@@ -92,6 +95,7 @@ public class RestauranteController {
         @ApiResponse(responseCode = "200", description = "Restaurante atualizado com sucesso"),
         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado")
     })
+    @PreAuthorize("hasRole('RESTAURANTE') or hasRole('ADMIN')")
     public ResponseEntity<RestauranteResponseDTO> ativarDesativarRestaurante(@PathVariable Long id) {
         RestauranteResponseDTO restauranteAtualizado = restauranteService.ativarDesativarRestaurante(id);
         return ResponseEntity.ok(restauranteAtualizado);

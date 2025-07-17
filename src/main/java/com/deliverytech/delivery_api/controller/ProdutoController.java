@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.deliverytech.delivery_api.services.ProdutoService;
@@ -33,6 +34,7 @@ public class ProdutoController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
         @ApiResponse(responseCode = "409", description = "Produto já existe")
     })
+    @PreAuthorize("hasRole('RESTAURANTE') or hasRole('ADMIN')")
     public ResponseEntity<ProdutoResponseDTO> cadastrar(@Valid @RequestBody ProdutoRequestDTO dto) {
         ProdutoResponseDTO produto = produtoService.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(produto);
@@ -58,6 +60,7 @@ public class ProdutoController {
         @ApiResponse(responseCode = "404", description = "Produto não encontrado"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
+    @PreAuthorize("hasRole('ADMIN') or @produtoService.isOwner(#id)")
     public ResponseEntity<ProdutoResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoRequestDTO dto) {
         ProdutoResponseDTO produtoAtualizado = produtoService.atualizar(id, dto);
         return ResponseEntity.ok(produtoAtualizado);
@@ -70,6 +73,7 @@ public class ProdutoController {
         @ApiResponse(responseCode = "200", description = "Produto ativado/desativado com sucesso"),
         @ApiResponse(responseCode = "404", description = "Produto não encontrado")
     })
+    @PreAuthorize("hasRole('ADMIN') or @produtoService.isOwner(#id)")
     public ResponseEntity<ProdutoResponseDTO> ativarDesativarProduto(@PathVariable Long id) {
         ProdutoResponseDTO produtoAtualizado = produtoService.ativarDesativarProduto(id);
         return ResponseEntity.ok(produtoAtualizado);

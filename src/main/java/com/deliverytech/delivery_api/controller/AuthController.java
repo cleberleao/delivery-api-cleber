@@ -5,99 +5,74 @@ import com.deliverytech.delivery_api.dto.request.RegisterRequestDTO;
 import com.deliverytech.delivery_api.dto.response.LoginResponseDTO;
 import com.deliverytech.delivery_api.dto.response.UsuarioResponseDTO;
 import com.deliverytech.delivery_api.entity.Usuario;
+import com.deliverytech.delivery_api.enums.Role;
+import com.deliverytech.delivery_api.repository.UsuarioRepository;
 import com.deliverytech.delivery_api.security.JwtUtil;
-import com.deliverytech.delivery_api.security.SecurityUtils;
-import com.deliverytech.delivery_api.services.impl.AuthServiceImpl;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private AuthServiceImpl authService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Value("${jwt.expiration}")
-    private Long jwtExpiration;
-
-    private
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        try {
-            // Autenticar usuário
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getSenha()
-                    )
-            );
-
-            // Carregar detalhes do usuário
-            UserDetails userDetails = authService.loadUserByUsername(loginRequest.getEmail());
-
-            // Gerar token JWT
-            String token = jwtUtil.generateToken(userDetails);
-
-            // Criar resposta
-            Usuario usuario = (Usuario) userDetails;
-            UsuarioResponseDTO userResponse = new UsuarioResponseDTO(usuario);
-            LoginResponseDTO loginResponse = new LoginResponseDTO(token, jwtExpiration, userResponse);
-
-            return ResponseEntity.ok(loginResponse);
-
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body("Credenciais inválidas");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro interno do servidor");
-        }
-    }
+    private ModelMapper modelMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO registerRequest) {
-        try {
-            // Verificar se email já existe
-            if (authService.existsByEmail(registerRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Email já está em uso");
-            }
-
-            // Criar novo usuário
-            Usuario novoUsuario = authService.criarUsuario(registerRequest);
-
-            // Retornar dados do usuário (sem token - usuário deve fazer login)
-            UsuarioResponseDTO userResponse = new UsuarioResponseDTO(novoUsuario);
-            return ResponseEntity.status(201).body(userResponse);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao criar usuário: " + e.getMessage());
+    public ResponseEntity<LoginResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
+        // Verifica se o email já está cadastrado
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
+        Usuario usuario = Usuario.builder()
+                .email(request.getEmail())
+                .senha(passwordEncoder.encode(request.getSenha()))
+                .nome(request.getNome())
+                .role(request.getRole() != null ? request.getRole() : Role.CLIENTE)
+                .dataCriacao(LocalDateTime.now())
+                .ativo(true)
+                .restauranteId(request.getRestauranteId())
+                .build();
+
+        usuarioRepository.save(usuario);
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setUsuario(modelMapper.map(usuario, UsuarioResponseDTO.class));
+        response.setTipo("Bearer");
+        response.setExpiracao(86400000L); // 1 dia de expiração
+        response.setToken(jwtUtil.generateToken(User.withUsername(usuario.getEmail()).password(usuario.getSenha()).authorities("ROLE_" + usuario.getRole().name()).build(), usuario));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser() {
-        try {
-            Usuario usuarioLogado = SecurityUtils.getCurrentUser();
-            UsuarioResponseDTO userResponse = new UsuarioResponseDTO(usuarioLogado);
-            return ResponseEntity.ok(userResponse);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Usuário não autenticado");
-        }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha()));
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setUsuario(modelMapper.map(usuario, UsuarioResponseDTO.class));
+        response.setTipo("Bearer");
+        response.setExpiracao(86400000L); // 1 dia de expiração
+        response.setToken(jwtUtil.generateToken(User.withUsername(usuario.getEmail()).password(usuario.getSenha()).authorities("ROLE_" + usuario.getRole().name()).build(), usuario));
+        return ResponseEntity.ok(response);
     }
 }
 

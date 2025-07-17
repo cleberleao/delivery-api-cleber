@@ -2,12 +2,14 @@ package com.deliverytech.delivery_api.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.deliverytech.delivery_api.enums.Role;
 
+import javax.net.ssl.SSLSession;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Usuario implements UserDetails {
 
     @Id
@@ -40,7 +43,7 @@ public class Usuario implements UserDetails {
     private boolean ativo;
 
     @Column(name = "data_criacao", nullable = false)
-    private LocalDateTime dataCriacao = LocalDateTime.now();
+    private LocalDateTime dataCriacao;
 
     @Column(name = "restaurante_id")
     private Long restauranteId;
@@ -81,5 +84,13 @@ public class Usuario implements UserDetails {
 
     public boolean getAtivo() {
         return ativo;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public Long getRestaurante() {
+        return restauranteId;
     }
 }

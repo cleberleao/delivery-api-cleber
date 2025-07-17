@@ -1,22 +1,115 @@
 {
 	"info": {
-		"_postman_id": "a5dd522e-3b80-4fc0-bd50-3661998f97c2",
-		"name": "DeliveryTech Entrga 3",
+		"_postman_id": "f7b02d6a-f657-468a-b6ef-1e39d8e96ad3",
+		"name": "DeliveryTech Entrga 6",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "33884958"
 	},
 	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "http://localhost:8080/auth/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"Cleber\",\r\n  \"email\": \"cleber@cleberleao.com\",\r\n  \"senha\": \"123456789\",\r\n  \"role\": \"RESTAURANTE\",\r\n  \"restauranteId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/auth/register' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"nome\": \"string\",\r\n  \"email\": \"string\",\r\n  \"senha\": \"string\",\r\n  \"role\": \"ADMIN\",\r\n  \"restauranteId\": 9007199254740991\r\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"cleber@cleberleao.com\",\r\n  \"senha\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/auth/login' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"email\": \"string\",\r\n  \"senha\": \"string\"\r\n}'"
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Cliente",
 			"item": [
 				{
 					"name": "http://localhost:8080/clientes",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUkVTVEFVUkFOVEUiLCJyZXN0YXVyYW50ZUlkIjozLCJ1c2VySWQiOjcsInN1YiI6ImNsZWJlckBjbGViZXJsZWFvLmNvbSIsImlhdCI6MTc1Mjc2MjIyMCwiZXhwIjoxNzUyODQ4NjIwfQ.0eGWX7T7t7vJHVshMqOQmqy7lyb8xXNProF8BFbO4gI",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"nome\": \"João Novo\",\r\n    \"email\": \"joao.silva@example.com\",\r\n    \"telefone\": \"(31) 99999-9999\",\r\n    \"endereco\": \"Rua das Flores, 123 - Contagem, MG\",\r\n    \"dataCadastro\": \"2025-06-26T21:19:00\"\r\n}",
+							"raw": "{\r\n    \"nome\": \"João teste token\",\r\n    \"email\": \"joao.token@example.com\",\r\n    \"telefone\": \"+5531999999999\",\r\n    \"endereco\": \"Rua das Flores, 123 - Contagem, MG\",\r\n    \"dataCadastro\": \"2025-06-26T21:19:00\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -199,7 +292,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"Produto 12\",\n    \"descricao\": \"Descrição do produto\",\n    \"preco\": 19.99,\n    \"categoria\": \"Bebidas\",\n    \"disponivel\": true,\n    \"restauranteId\": 1\n}",
+							"raw": "{\n    \"nome\": \"Produto 14\",\n    \"descricao\": \"Descrição do produto\",\n    \"preco\": 19.99,\n    \"categoria\": \"Bebidas\",\n    \"disponivel\": true,\n    \"restauranteId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -413,7 +506,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"numeroPedido\": \"PED02355\",\r\n    \"dataPedido\": \"2025-07-04T11:19:00\",\r\n    \"valorTotal\": 0.0,\r\n    \"observacoes\": \"sem cebola\",\r\n    \"clienteId\": 1,\r\n    \"restauranteId\": 1,\r\n    \"enderecoEntrega\": \"Rua B, 456\",\r\n    \"itens\": [\r\n        {\r\n            \"produtoId\": 1,\r\n            \"quantidade\": 2\r\n        },\r\n        {\r\n            \"produtoId\": 2,\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"numeroPedido\": \"PED02355\",\r\n    \"dataPedido\": \"2025-07-04T11:19:00\",\r\n    \"valorTotal\": 0.0,\r\n    \"observacoes\": \"sem cebola\",\r\n    \"clienteId\": 1,\r\n    \"restauranteId\": 1,\r\n    \"enderecoEntrega\": \"Rua B, 456\",\r\n    \"cep\": \"32183000\",\r\n    \"itens\": [\r\n        {\r\n            \"produtoId\": 1,\r\n            \"quantidade\": 2\r\n        },\r\n        {\r\n            \"produtoId\": 2,\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -586,7 +679,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"Exemplo dois\",\n    \"categoria\": \"Japonês\",\n    \"endereco\": \"Rua das Flores, 100\",\n    \"telefone\": \"+5511999998888\",\n    \"taxaEntrega\": 5.00,\n    \"avaliacao\": 4.5,\n    \"ativo\": true\n  }",
+							"raw": "{\n    \"nome\": \"Exemplo dois 3\",\n    \"categoria\": \"Japonês\",\n    \"endereco\": \"Rua das Flores, 100\",\n    \"telefone\": \"+5511999998888\",\n    \"taxaEntrega\": 5.00,\n    \"avaliacao\": 4.5,\n    \"cep\": \"32183030\",\n    \"ativo\": true\n  }",
 							"options": {
 								"raw": {
 									"language": "json"

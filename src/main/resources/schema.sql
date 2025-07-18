@@ -4,6 +4,7 @@ CREATE TABLE cliente (
     email VARCHAR(100) NOT NULL,
     telefone VARCHAR(20),
     endereco VARCHAR(200),
+    cpf VARCHAR(11),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ativo TINYINT(1)
 );
@@ -14,6 +15,7 @@ CREATE TABLE restaurante (
     categoria VARCHAR(50),
     endereco VARCHAR(200),
     telefone VARCHAR(20),
+    cep VARCHAR(20),
     taxa_entrega DECIMAL(10,2),
     avaliacao DECIMAL(2,1),
     ativo TINYINT(1)
@@ -40,6 +42,7 @@ CREATE TABLE pedido (
     cliente_id BIGINT,
     restaurante_id BIGINT,
     endereco_entrega VARCHAR(200),
+    cep VARCHAR(20),
     subtotal DECIMAL(10,2),
     taxa_entrega DECIMAL(10,2),
     itens VARCHAR(200),
@@ -60,3 +63,12 @@ CREATE TABLE item_pedido (
 
 ALTER TABLE restaurante ADD COLUMN cep VARCHAR(20);
 ALTER TABLE pedido ADD COLUMN cep VARCHAR(20);
+
+create table usuario (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(200) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    ativo TINYINT(1) DEFAULT 1
+);

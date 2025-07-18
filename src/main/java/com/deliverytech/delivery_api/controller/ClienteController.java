@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deliverytech.delivery_api.dto.request.ClienteRequestDTO;
 import com.deliverytech.delivery_api.dto.response.ClienteResponseDTO;
 import com.deliverytech.delivery_api.services.ClienteService;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/clientes")

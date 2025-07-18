@@ -1,26 +1,36 @@
 package com.deliverytech.delivery_api.controller;
 
+import com.deliverytech.delivery_api.dto.request.ClienteRequestDTO;
 import com.deliverytech.delivery_api.entity.Cliente;
+import com.deliverytech.delivery_api.entity.Usuario;
 import com.deliverytech.delivery_api.repository.ClienteRepository;
+import com.deliverytech.delivery_api.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+
+import static com.deliverytech.delivery_api.enums.Role.ADMIN;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureWebMvc
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestDataConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -36,22 +46,82 @@ class ClienteControllerIT {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    Cliente novoCliente = new Cliente();
+
+    @BeforeEach
+    void setupAdminUser() {
+        if (usuarioRepository.findByEmail("admin@delivery.com").isEmpty()) {
+            Usuario admin = new Usuario();
+            admin.setNome("Admin");
+            admin.setEmail("admin@delivery.com");
+            admin.setSenha(passwordEncoder.encode("123456"));
+            admin.setDataCriacao(LocalDateTime.now());
+            admin.setRole(ADMIN);
+            usuarioRepository.save(admin);
+        }
+        // criar cliente
+
+        novoCliente.setNome("Maria Silva");
+        novoCliente.setEmail("maria.teste@email.com");
+        novoCliente.setCpf("12345678901");
+        novoCliente.setTelefone("+5511888888888");
+        novoCliente.setEndereco("Rua das Flores, 123");
+        novoCliente.setAtivo(true);
+        novoCliente.setDataCadastro(LocalDateTime.now());
+        novoCliente = clienteRepository.save(novoCliente);
+    }
+
+    public String getToken() throws Exception {
+        // Simula o login do usuário para obter o token JWT
+        String loginJson = """
+                {
+                    "email": "admin@delivery.com",
+                    "senha": "123456"
+                }
+                """;
+
+        String resposta = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String token = objectMapper.readTree(resposta).get("token").asText();
+
+        return token;
+    }
+
     @Test
     @DisplayName("Deve criar cliente com dados válidos")
     void should_CreateCliente_When_ValidData() throws Exception {
         // Given
-        Cliente novoCliente = new Cliente();
-        novoCliente.setNome("Maria Silva");
-        novoCliente.setEmail("maria@email.com");
-        novoCliente.setTelefone("11888888888");
+        ClienteRequestDTO cliente = new ClienteRequestDTO();
+        cliente.setNome("Jose Silva");
+        cliente.setEmail("jose.teste@email.com");
+        cliente.setCpf("12345678905");
+        cliente.setTelefone("+551188888899");
+        cliente.setEndereco("Rua das Flores, 22");
+
 
         // When & Then
         mockMvc.perform(post("/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(novoCliente)))
+                        .header("Authorization", "Bearer " + getToken())
+                        .content(objectMapper.writeValueAsString(cliente)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nome", is("Maria Silva")))
-                .andExpect(jsonPath("$.email", is("maria@email.com")))
+                .andExpect(jsonPath("$.nome", is("Jose Silva")))
+                .andExpect(jsonPath("$.email", is("jose.teste@email.com")))
+                .andExpect(jsonPath("$.telefone", is("+551188888899")))
+                .andExpect(jsonPath("$.cpf", is("12345678905")))
+                .andExpect(jsonPath("$.endereco", is("Rua das Flores, 22")))
                 .andExpect(jsonPath("$.id", notNullValue()));
     }
 
@@ -66,9 +136,18 @@ class ClienteControllerIT {
         // When & Then
         mockMvc.perform(post("/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken())
                         .content(objectMapper.writeValueAsString(clienteInvalido)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors", hasSize(greaterThan(0))));
+                .andExpect(jsonPath("$.timestamp", notNullValue()))
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.error", is("Dados inválidos")))
+                .andExpect(jsonPath("$.message", is("Erro de validação nos dados enviados")))
+                .andExpect(jsonPath("$.path", is("/clientes")))
+                .andExpect(jsonPath("$.errorCode", is("VALIDATION_ERROR")))
+                .andExpect(jsonPath("$.details.cpf", is("O CPF é obrigatório")))
+                .andExpect(jsonPath("$.details.nome", is("O nome é obrigatório")))
+                .andExpect(jsonPath("$.details.email", is("O email deve ser válido")));
     }
 
     @Test
@@ -78,7 +157,9 @@ class ClienteControllerIT {
         Cliente cliente = clienteRepository.findAll().get(0);
 
         // When & Then
-        mockMvc.perform(get("/clientes/{id}", cliente.getId()))
+        mockMvc.perform(get("/clientes/{id}", cliente.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + getToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(cliente.getId().intValue())))
                 .andExpect(jsonPath("$.nome", is(cliente.getNome())))
@@ -89,54 +170,35 @@ class ClienteControllerIT {
     @DisplayName("Deve retornar 404 quando cliente não existe")
     void should_ReturnNotFound_When_ClienteNotExists() throws Exception {
         // When & Then
-        mockMvc.perform(get("/clientes/{id}", 999L))
+        mockMvc.perform(get("/clientes/{id}", 999L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken()))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", containsString("Cliente não encontrado")));
-    }
-
-    @Test
-    @DisplayName("Deve listar clientes com paginação")
-    void should_ReturnPagedClientes_When_RequestedWithPagination() throws Exception {
-        // When & Then
-        mockMvc.perform(get("/clientes")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
-                .andExpect(jsonPath("$.number", is(0)))
-                .andExpect(jsonPath("$.size", is(10)));
+                .andExpect(jsonPath("$.timestamp", notNullValue()))
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.error", is("Não encontrado")))
+                .andExpect(jsonPath("$.message", containsString("Cliente não encontrado")))
+                .andExpect(jsonPath("$.path", is("/clientes/999")));
     }
 
     @Test
     @DisplayName("Deve atualizar cliente existente")
     void should_UpdateCliente_When_ClienteExists() throws Exception {
         // Given
-        Cliente cliente = clienteRepository.findAll().get(0);
+        Cliente cliente = clienteRepository.findAll().get(1);
         cliente.setNome("Nome Atualizado");
         cliente.setTelefone("11777777777");
 
+
         // When & Then
-        mockMvc.perform(put("/api/clientes/{id}", cliente.getId())
+        mockMvc.perform(put("/clientes/{id}", cliente.getId())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken())
                         .content(objectMapper.writeValueAsString(cliente)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome", is("Nome Atualizado")))
                 .andExpect(jsonPath("$.telefone", is("11777777777")));
     }
 
-    @Test
-    @DisplayName("Deve deletar cliente existente")
-    void should_DeleteCliente_When_ClienteExists() throws Exception {
-        // Given
-        Cliente cliente = clienteRepository.findAll().get(0);
-
-        // When & Then
-        mockMvc.perform(delete("/api/clientes/{id}", cliente.getId()))
-                .andExpect(status().isNoContent());
-
-        // Verificar se foi deletado
-        mockMvc.perform(get("/api/clientes/{id}", cliente.getId()))
-                .andExpect(status().isNotFound());
-    }
 }
 

@@ -24,6 +24,11 @@ public class ClienteRequestDTO {
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "O telefone deve ser um número válido com 10 a 15 dígitos, podendo iniciar com '+'")
     private String telefone;
 
+    @Schema(description = "CPF do cliente", example = "123.456.789-09", required = true)
+    @NotBlank(message = "O CPF é obrigatório")
+    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{11})$", message = "O CPF deve ser válido, com ou sem formatação")
+    private String cpf;
+
     @Schema(description = "Endereço do cliente", example = "Rua das Flores, 123", required = true)
     @NotBlank(message = "O endereço é obrigatório")
     private String endereco;

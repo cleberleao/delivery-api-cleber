@@ -28,6 +28,8 @@ public class Cliente {
 
     private String endereco;
 
+    private String cpf;
+
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
 

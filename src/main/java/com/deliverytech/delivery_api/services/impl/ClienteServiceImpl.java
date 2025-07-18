@@ -32,6 +32,9 @@ public class ClienteServiceImpl implements ClienteService {
         if (clienteRepository.existsByEmail(dto.getEmail())) {
             throw new BusinessException("Email já cadastrado: " + dto.getEmail());
         }
+        if (clienteRepository.existsByCpf(dto.getCpf())) {
+            throw new BusinessException("CPF já cadastrado: " + dto.getCpf());
+        }
         // Converter DTO para entidade
         Cliente cliente = modelMapper.map(dto, Cliente.class);
         cliente.setAtivo(true);
@@ -122,4 +125,5 @@ public class ClienteServiceImpl implements ClienteService {
                 .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
                 .toList();
     }
+
 }

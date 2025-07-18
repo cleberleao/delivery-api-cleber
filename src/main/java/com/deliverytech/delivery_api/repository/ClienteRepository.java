@@ -27,5 +27,6 @@ public interface ClienteRepository extends JpaRepository <Cliente, Long> {
 
     // Buscar clientes ativos com paginação
     Page<Cliente> findByAtivoTrue(Pageable pageable);
-    
+
+    boolean existsByCpf(String cpf);
 }

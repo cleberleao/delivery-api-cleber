@@ -10,4 +10,5 @@ public class ClienteResponseDTO {
     private String telefone;
     private String endereco;
     private boolean ativo;
+    private String cpf;
 }

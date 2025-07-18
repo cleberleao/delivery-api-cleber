@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.deliverytech.delivery_api.dto.request.ClienteRequestDTO;
 import com.deliverytech.delivery_api.dto.response.ClienteResponseDTO;
+import org.springframework.data.domain.Page;
 
 public interface ClienteService {
 
@@ -18,6 +19,9 @@ public interface ClienteService {
     ClienteResponseDTO ativarDesativarCliente(Long id);
 
     List<ClienteResponseDTO> listarAtivos();
+
+    //listar ativos paginado
+    Page<ClienteResponseDTO> listarAtivosPaginado(int page, int size);
 
     List<ClienteResponseDTO> buscarPorNome(String nome);
     

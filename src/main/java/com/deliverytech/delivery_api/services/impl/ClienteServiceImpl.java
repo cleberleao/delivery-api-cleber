@@ -6,6 +6,8 @@ import com.deliverytech.delivery_api.entity.Cliente;
 import com.deliverytech.delivery_api.exception.BusinessException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +103,14 @@ public class ClienteServiceImpl implements ClienteService {
         return clientesAtivos.stream()
                 .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
                 .toList();
+    }
+    //listar ativos paginado
+    @Override
+    public Page<ClienteResponseDTO> listarAtivosPaginado(int page, int size) {
+        // Buscar clientes ativos com paginação
+        Page<Cliente> clientesAtivos = clienteRepository.findByAtivoTrue(PageRequest.of(page, size));
+        // Converter lista de entidades para lista de DTOs
+        return clientesAtivos.map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class));
     }
     //buscar por nome
     @Override

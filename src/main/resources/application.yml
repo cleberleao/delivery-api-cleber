@@ -52,13 +52,3 @@ spring:
       name: admin
       password: admin123
       roles: ACTUATOR
-
-# application.yml
-spring:
-  sleuth:
-    sampler:
-      probability: 1.0  # 100% sampling para desenvolvimento
-    zipkin:
-      base-url: http://localhost:9411
-    web:
-      skip-pattern: /actuator.*

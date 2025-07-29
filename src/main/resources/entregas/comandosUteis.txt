@@ -1,0 +1,60 @@
+COMANDOS MAVEN ESSENCIAIS:
+
+1. Executar todos os testes:
+   mvn clean test
+
+2. Executar testes específicos:
+   mvn test -Dtest=ClienteServiceTest
+   mvn test -Dtest=*ServiceTest
+   mvn test -Dtest=*ControllerIT
+
+3. Executar com perfil de teste:
+   mvn test -Dspring.profiles.active=test
+
+4. Gerar relatório de cobertura:
+   mvn clean test jacoco:report
+
+5. Verificar cobertura mínima:
+   mvn jacoco:check
+
+6. Executar testes em modo debug:
+   mvn test -Dmaven.surefire.debug
+
+7. Executar testes com logs detalhados:
+   mvn test -X
+
+8. Pular testes durante build:
+   mvn clean install -DskipTests
+
+9. Executar apenas testes unitários:
+   mvn test -Dtest=!*IT
+
+10. Executar apenas testes de integração:
+    mvn test -Dtest=*IT
+
+COMANDOS PARA ANÁLISE:
+
+1. Visualizar relatório no navegador:
+   open target/site/jacoco/index.html (Mac)
+   start target/site/jacoco/index.html (Windows)
+
+2. Verificar logs de teste:
+   cat target/surefire-reports/*.txt
+
+3. Limpar cache de testes:
+   mvn clean
+
+DICAS DE TROUBLESHOOTING:
+
+• Se testes falharem por dependências:
+  mvn dependency:resolve
+
+• Se houver problemas de encoding:
+  mvn test -Dfile.encoding=UTF-8
+
+• Para debug de testes específicos:
+  mvn test -Dtest=ClienteServiceTest -Dmaven.surefire.debug
+
+• Para executar com mais memória:
+  export MAVEN_OPTS="-Xmx1024m"
+  mvn test

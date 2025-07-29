@@ -11,6 +11,8 @@ import com.deliverytech.delivery_api.services.ProdutoService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,8 +35,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ProdutoResponseDTO cadastrar(ProdutoRequestDTO dto) {
         // Converter DTO para entidade
         Produto produto = modelMapper.map(dto, Produto.class);
-        Restaurante restaurante = restauranteRepository.findById(dto.getRestauranteId()).get();
-        produto.setRestaurante(restaurante);
+        Long restauranteId = dto.getRestauranteId();
+        Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
+        produto.setRestaurante(restaurante.get());
         // Salvar cliente
         Produto produtoSalvo = produtoRepository.save(produto);
         // Retornar DTO de resposta
@@ -42,6 +45,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    @Cacheable(value = "produtos", key = "#id")
     public ProdutoResponseDTO buscarPorId(Long id) {
         // Buscar produto por ID
         Produto produto = produtoRepository.findById(id)
@@ -51,6 +55,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    @CacheEvict(value = "produtos", key = "#produto.id")
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
         // Buscar produto existente
         Produto produtoExistente = produtoRepository.findById(id)

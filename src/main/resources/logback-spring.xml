@@ -19,7 +19,7 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/delivery-api.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/delivery-api.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
@@ -33,7 +33,7 @@
             <pattern>${JSON_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/delivery-api-json.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/delivery-api-json.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
